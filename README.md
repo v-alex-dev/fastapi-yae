@@ -37,3 +37,25 @@ La documentation interactive (Swagger) sur http://127.0.0.1:8000/docs
 ```bash
 curl http://127.0.0.1:8000/health/
 ```
+
+---
+
+## Option : lancer le projet avec Docker
+
+Cette méthode lance l'API **et** une base PostgreSQL de test, sans rien
+installer en local à part Docker.
+
+```bash
+docker compose up --build
+```
+
+- L'API est disponible sur http://127.0.0.1:8000
+- La base PostgreSQL est disponible sur le port 5432 (utile pour
+  s'y connecter avec un client SQL comme DBeaver ou pgAdmin)
+
+Pour tout arrêter et supprimer les données de la base :
+
+```bash
+docker compose down -v
+```
+
