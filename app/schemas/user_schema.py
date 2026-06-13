@@ -19,3 +19,19 @@ class UserUpdate(BaseModel):
     email: EmailStr | None
     password: str | None
 
+class UserOut(BaseModel):
+    """Data returned to the client (output).
+
+    Notice there is NO password field here: we never expose it,
+    not even the hashed version.
+    """
+
+    id:int
+    username: str
+    email: EmailStr
+    is_active: bool
+    created_at: datetime
+
+    # Allows creating this schema directly from an asyncpg Record
+    # (or any object with attributes), not just from a dict.
+    model_config = ConfigDict(from_attributes=True)
