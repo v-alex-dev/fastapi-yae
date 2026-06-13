@@ -4,22 +4,36 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+# migrations/env.py
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+import sys
+import os
+from logging.config import fileConfig
+
+from alembic import context
+
+# --- Custom import: allow this script to find the "app" package ---
+# Add the project root to sys.path so we can import app.config.settings
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from app.config.settings import settings
+
+# this is the Alembic Config object
 config = context.config
 
+# --- Custom: inject our database URL from app settings ---
+# Instead of hardcoding the URL in alembic.ini, we reuse the same
+# DSN as the rest of the application (built from .env values).
+config.set_main_option("sqlalchemy.url", settings.database_dsn)
+
 # Interpret the config file for Python logging.
-# This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
+# --- Custom: no ORM models, so no metadata for autogenerate ---
+# We write every migration manually using raw SQL (op.execute()),
+# so "autogenerate" comparison against models is not used here.
 target_metadata = None
-
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
