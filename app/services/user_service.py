@@ -32,4 +32,13 @@ async def get_user_by_id(user_id: int) -> User:
 
     return await pool.fetchrow(query, user_id)
 
+async def list_users() -> list[asyncpg.Record]:
+    """Fetch all users stored in the database, ordred by id."""
+    pool = get_pool()
+    query = """
+        SELECT id, username, is_active, created_at
+        FROM users;
+        ORDER by id desc;
+    """
+    return await pool.fetch(query)
 
