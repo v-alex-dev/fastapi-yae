@@ -19,3 +19,17 @@ async def create_user(user_data: UserCreate) -> User:
     """
 
     return await pool.fetchrow(query, user_data.username, user_data.email, hashed_password)
+
+async def get_user_by_id(user_id: int) -> User:
+    """Fetch a single user by id, or None if it does not exist."""
+
+    pool = get_pool()
+    query = """
+        SELECT id, username, is_active, created_at 
+        FROM users 
+        WHERE id = $1;
+    """
+
+    return await pool.fetchrow(query, user_id)
+
+
