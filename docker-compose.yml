@@ -1,0 +1,45 @@
+# docker-compose.yml
+#
+# Spins up two containers:
+#  - "db"  : a disposable PostgreSQL database (data is lost on `docker compose down -v`)
+#  - "api" : the FastAPI application, built from the local Dockerfile
+#
+# Note: inside Docker, services reach each other by their service name,
+# so the API connects to the database using DB_HOST=db (not "localhost").
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fastapi_learning
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: fastapi_learning
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount the source code so changes are picked up by --reload
+      - ./app:/code/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
