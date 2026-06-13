@@ -80,3 +80,9 @@ async def update_user(user_id: int, user_data: UserUpdate) -> asyncpg.Record | N
     """
 
     return await pool.fetchrow(query, *values)
+
+async def delete_user(user_id: int) -> int | None:
+    """Delete a user by id. Returns the deleted id, or None if not found."""
+    pool = get_pool()
+    query = """DELETE FROM users WHERE id = $1 RETURNING id;"""
+    return await pool.fetchrow(query, user_id)
