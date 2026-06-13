@@ -8,3 +8,14 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
+class UserUpdate(BaseModel):
+    """Data allowed when updating a user (input).
+
+    All fields are optional: the client can send only the fields
+    they want to change.
+    """
+
+    username: str | None
+    email: EmailStr | None
+    password: str | None
+
