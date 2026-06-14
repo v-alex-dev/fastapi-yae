@@ -46,7 +46,7 @@ async def list_users() -> list[asyncpg.Record]:
     pool = get_pool()
     query = """
         SELECT id, username,email, is_active, created_at
-        FROM users;
+        FROM users
         ORDER BY id DESC;
     """
     return await pool.fetch(query)
