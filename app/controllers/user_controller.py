@@ -14,3 +14,12 @@ async def create_user(user_data: UserCreate) -> UserOut:
 
     return UserOut.model_validate(record)
 
+async def get_user(user_id: int)-> UserOut:
+    """Fetch a single user by id. Returns 404 if not found."""
+    record = await user_service.get_user_by_id(user_id)
+
+    if record is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return UserOut.model_validate(record)
+
