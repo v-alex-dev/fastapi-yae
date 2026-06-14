@@ -25,3 +25,7 @@ async def read_user(user_id: int) -> UserOut:
     """get a single user by id"""
     return await user_controller.get_user(user_id)
 
+@router.patch("/{user_id}", response_model=UserOut)
+async def update_user(user_id:int, user_data: UserUpdate) -> UserOut:
+    """Partially update a user"""
+    return await user_controller.update_user(user_id, user_data)
