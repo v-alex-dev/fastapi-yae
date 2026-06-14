@@ -63,31 +63,29 @@ async def update_user(user_id: int, user_data: UserUpdate) -> asyncpg.Record | N
     param_index = 1
 
     if user_data.username is not None:
-        fields.append(f"username = {param_index}")
+        fields.append(f"username = ${param_index}")
         values.append(user_data.username)
         param_index += 1
     if user_data.email is not None:
-        fields.append(f"email = {param_index}")
+        fields.append(f"email = ${param_index}")
         values.append(user_data.email)
         param_index += 1
     if user_data.password is not None:
-        fields.append(f"hashed_password = {param_index}")
-        values.append(user_data.password)
+        hashed_password = hash_password(user_data.password)
+        fields.append(f"hashed_password = ${param_index}")
+        values.append(hashed_password)
         param_index += 1
 
     if not fields:
         return await get_user_by_id(user_id)
 
-
     values.append(user_id)
-
-    query = """
-        UPDATE users
-        SET {", ".join(fields)}"
-        WHERE id = ${param_index};
-        RETURNING id, username, email, is_active, created_at;
-    """
-
+    query = f"""
+           UPDATE users
+           SET {", ".join(fields)}
+           WHERE id = ${param_index}
+           RETURNING id, username, email, is_active, created_at;
+       """
     return await pool.fetchrow(query, *values)
 
 async def delete_user(user_id: int) -> int | None:
