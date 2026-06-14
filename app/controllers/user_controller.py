@@ -39,3 +39,11 @@ async def update_user(user_id:int ,user_data: UserUpdate) -> UserOut:
         raise HTTPException(status_code=404, detail="User not found")
 
     return UserOut.model_validate(record)
+
+async def delete_user(user_id:int)-> dict:
+    """Delete an existing user. Returns 404 if not found."""
+    deleted_id = await user_service.delete_user(user_id)
+    if deleted_id is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {"detail": f"User {deleted_id} has been deleted"}
