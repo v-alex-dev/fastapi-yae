@@ -1,5 +1,8 @@
+from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
+from jose import JWTError, jwt
 
+from app.config.settings import settings
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -14,3 +17,17 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     we just hash the input again and compare the results.
     """
     return pwd_context.verify(plain_password, hashed_password)
+
+def create_access_token(username: str) -> str:
+    """Create a signed JWT containing the username and an expiration date.
+
+    The "sub" (subject) claim is the standard JWT field used to
+    identify the user the token belongs to.
+    """
+    expire = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.access_token_expire_minutes
+    )
+
+    payload = {"sub": username, "exp": expire}
+
+    return jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
