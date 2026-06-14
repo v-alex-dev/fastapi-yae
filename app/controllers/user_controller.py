@@ -23,3 +23,8 @@ async def get_user(user_id: int)-> UserOut:
 
     return UserOut.model_validate(record)
 
+async def list_users()-> list[UserOut]:
+    """Fetch all users """
+    records = await user_service.list_users()
+    return [UserOut.model_validate(record) for record in records]
+
