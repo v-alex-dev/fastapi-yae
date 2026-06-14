@@ -15,7 +15,7 @@ async def create_user(user_data: UserCreate) -> User:
     query = """
         INSERT INTO users (username, email, hashed_password)
         VALUES ($1, $2, $3)
-        RETURNING id, username, is_active, created_at;
+        RETURNING id, username,email, is_active, created_at;
     """
 
     return await pool.fetchrow(query, user_data.username, user_data.email, hashed_password)
@@ -25,7 +25,7 @@ async def get_user_by_id(user_id: int) -> User:
 
     pool = get_pool()
     query = """
-        SELECT id, username, is_active, created_at 
+        SELECT id, username,email, is_active, created_at 
         FROM users 
         WHERE id = $1;
     """
@@ -45,9 +45,9 @@ async def list_users() -> list[asyncpg.Record]:
     """Fetch all users stored in the database, ordred by id."""
     pool = get_pool()
     query = """
-        SELECT id, username, is_active, created_at
+        SELECT id, username,email, is_active, created_at
         FROM users;
-        ORDER by id desc;
+        ORDER BY id DESC;
     """
     return await pool.fetch(query)
 
