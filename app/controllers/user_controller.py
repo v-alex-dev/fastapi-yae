@@ -12,7 +12,7 @@ async def create_user(user_data: UserCreate) -> UserOut:
         # Raised by PostgreSQL when a UNIQUE constraint (username/email) is violated.
         raise HTTPException(status_code=409, detail="Username or email already exists!")
 
-    return UserOut.model_validate(record)
+    return UserOut.model_validate(dict(record))
 
 async def get_user(user_id: int)-> UserOut:
     """Fetch a single user by id. Returns 404 if not found."""
@@ -21,12 +21,12 @@ async def get_user(user_id: int)-> UserOut:
     if record is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return UserOut.model_validate(record)
+    return UserOut.model_validate(dict(record))
 
 async def list_users()-> list[UserOut]:
     """Fetch all users """
     records = await user_service.list_users()
-    return [UserOut.model_validate(record) for record in records]
+    return [UserOut.model_validate(dict(record)) for record in records]
 
 async def update_user(user_id:int ,user_data: UserUpdate) -> UserOut:
     """Update an existing user. Returns 404 if not found."""
@@ -38,7 +38,7 @@ async def update_user(user_id:int ,user_data: UserUpdate) -> UserOut:
     if record is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return UserOut.model_validate(record)
+    return UserOut.model_validate(dict(record))
 
 async def delete_user(user_id:int)-> dict:
     """Delete an existing user. Returns 404 if not found."""
