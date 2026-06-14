@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     db_password: str = "postgres"
     db_name: str = "fastapi_learning"
 
+    # JWT Settings
+    # JWT settings
+    secret_key: str =
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
     # Tell pydantic where to load environment variables from
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
