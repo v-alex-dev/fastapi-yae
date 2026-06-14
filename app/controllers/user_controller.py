@@ -10,7 +10,7 @@ async def create_user(user_data: UserCreate) -> UserOut:
         record= await user_service.create_user(user_data)
     except asyncpg.UniqueViolationError:
         # Raised by PostgreSQL when a UNIQUE constraint (username/email) is violated.
-        raise HTTPException(status_code=409, detail="Ussername or email already exists!")
+        raise HTTPException(status_code=409, detail="Username or email already exists!")
 
     return UserOut.model_validate(record)
 
@@ -28,3 +28,14 @@ async def list_users()-> list[UserOut]:
     records = await user_service.list_users()
     return [UserOut.model_validate(record) for record in records]
 
+async def update_user(user_id:int ,user_data: UserUpdate) -> UserOut:
+    """Update an existing user. Returns 404 if not found."""
+    try:
+        record = await user_service.update_user(user_id, user_data)
+    except asyncpg.UniqueViolationError:
+        raise HTTPException(status_code=409, detail="Username or email already exists!")
+
+    if record is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return UserOut.model_validate(record)
