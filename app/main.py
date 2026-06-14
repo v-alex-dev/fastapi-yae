@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from app.config.settings import settings
 from app.db.database import connect_to_db, disconnect_from_db
 from app.middleware.logging_middleware import LoggingMiddleware
-from app.routes import health_routes
+from app.routes import health_routes, user_routes
 
 
 @asynccontextmanager
@@ -29,3 +29,4 @@ app.add_middleware(LoggingMiddleware)
 
 # Register routers
 app.include_router(health_routes.router)
+app.include_router(user_routes.router)
