@@ -15,3 +15,7 @@ async def create_user(user_data: UserCreate) -> UserOut:
     """create a new user"""
     return await user_controller.create_user(user_data)
 
+@router.get("/", response_model=list[UserOut])
+async def list_users():
+    """list all users"""
+    return await user_controller.list_users()
