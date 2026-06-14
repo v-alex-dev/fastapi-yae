@@ -41,6 +41,15 @@ async def get_user_by_email(email: str) -> User:
     """
     return await pool.fetchrow(query, email)
 
+async def get_user_by_username(username: str) -> User:
+    pool = get_pool()
+    query = """
+        SELECT id, username,email,hashed_password, is_active, created_at
+        FROM users
+        WHERE username = $1;
+    """
+    return await pool.fetchrow(query, username)
+
 async def list_users() -> list[asyncpg.Record]:
     """Fetch all users stored in the database, ordred by id."""
     pool = get_pool()
