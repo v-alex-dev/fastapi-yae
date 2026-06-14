@@ -51,4 +51,4 @@ async def delete_user(user_id:int)-> dict:
 
 async def get_current_user_info(current_user) -> UserOut:
     """Convert the authenticated user's DB record into the public schema."""
-    return UserOut.model_validate(current_user)
+    return UserOut.model_validate(dict(current_user))
