@@ -31,3 +31,15 @@ def create_access_token(username: str) -> str:
     payload = {"sub": username, "exp": expire}
 
     return jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
+
+def decode_access_token(token: str) -> str | None:
+    """Decode a JWT and return the username (the "sub" claim).
+
+    Returns None if the token is invalid or expired,
+    so the caller can turn that into a 401 error.
+    """
+    try:
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+        return payload.get("sub")
+    except JWTError:
+        return None
