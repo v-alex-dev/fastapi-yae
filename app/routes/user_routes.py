@@ -34,12 +34,12 @@ async def list_users():
     return await user_controller.get_user(user_id)
 
 @router.patch("/{user_id}", response_model=UserOut)
-async def update_user(user_id:int, user_data: UserUpdate) -> UserOut:
+async def update_user(user_id:int, user_data: UserUpdate, current_user = Depends(get_current_user)) -> UserOut:
     """Partially update a user"""
-    return await user_controller.update_user(user_id, user_data)
+    return await user_controller.update_user(user_id, user_data, current_user)
 
 @router.delete("/{user_id}")
-async def delete_user(user_id: int):
+async def delete_user(user_id: int, current_user = Depends(get_current_user)):
     """delete a user"""
-    return await user_controller.delete_user(user_id)
+    return await user_controller.delete_user(user_id, current_user)
 
