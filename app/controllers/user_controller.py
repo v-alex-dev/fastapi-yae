@@ -29,8 +29,12 @@ async def list_users()-> list[UserOut]:
     records = await user_service.list_users()
     return [UserOut.model_validate(dict(record)) for record in records]
 
-async def update_user(user_id:int ,user_data: UserUpdate) -> UserOut:
+async def update_user(user_id:int ,user_data: UserUpdate, current_user) -> UserOut:
     """Update an existing user. Returns 404 if not found."""
+
+    if current_user['id'] != user_id:
+        raise HTTPException(status_code=404, detail="User not found")
+
     try:
         record = await user_service.update_user(user_id, user_data)
     except asyncpg.UniqueViolationError:
@@ -41,8 +45,12 @@ async def update_user(user_id:int ,user_data: UserUpdate) -> UserOut:
 
     return UserOut.model_validate(dict(record))
 
-async def delete_user(user_id:int)-> dict:
+async def delete_user(user_id:int, current_user)-> dict:
     """Delete an existing user. Returns 404 if not found."""
+
+    if current_user['id'] != user_id:
+        raise HTTPException(status_code=404, detail="User not found")
+
     deleted_id = await user_service.delete_user(user_id)
     if deleted_id is None:
         raise HTTPException(status_code=404, detail="User not found")
