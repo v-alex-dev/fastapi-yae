@@ -28,8 +28,8 @@ async def list_users():
 
 
 
-@router.get("/{user_id}", response_model=UserOut)
-async def read_user(user_id: int) -> UserOut:
+#@router.get("/{user_id}", response_model=UserOut)
+#async def read_user(user_id: int)) -> UserOut:
     """get a single user by id"""
     return await user_controller.get_user(user_id)
 
