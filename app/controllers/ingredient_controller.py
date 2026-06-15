@@ -15,12 +15,9 @@ async def create_ingredient(ingredient: IngredientCreate) -> IngredientOut:
 async def list_ingredients() -> list[asyncpg.Record]:
     return await ingredient_service.list_ingredients()
 
-async def update_ingredient(ingredient_id: int, ingredient: IngredientUpdate) -> IngredientOut:
+async def update_ingredient(ingredient: IngredientUpdate) -> IngredientOut:
     if ingredient is None:
         raise HTTPException(status_code=400, detail="Ingredient is required")
-
-    if ingredient_id != ingredient.id:
-        raise HTTPException(status_code=404, detail="Ingredient is not found")
 
     return await ingredient_service.ingredient_update(ingredient)
 
