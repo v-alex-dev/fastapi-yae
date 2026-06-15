@@ -23,7 +23,8 @@ def upgrade() -> None:
         """
             CREATE TABLE ingredients (
             id SERIAL PRIMARY KEY,
-            name VARCHAR(255),
+            name VARCHAR(255) NOT NULL UNIQUE,
+            created_at TIMESTAMP NOT NULL,
             );
         """
     )
