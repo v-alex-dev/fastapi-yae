@@ -6,6 +6,7 @@ class IngredientCreate(BaseModel):
     name: str
 
 class IngredientUpdate(BaseModel):
+    id: int
     name: str
 
 class IngredientDelete(BaseModel):
