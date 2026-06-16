@@ -1,6 +1,8 @@
 import asyncpg
 
 from fastapi import HTTPException
+from sqlalchemy.sql.functions import current_user
+
 from app.services import ingredient_service
 from app.schemas.ingredient_schema import IngredientUpdate, IngredientCreate, IngredientOut
 
@@ -20,14 +22,43 @@ async def create_ingredient(ingredient: IngredientCreate, current_user) -> Ingre
 
     return record
 
-async def list_ingredients() -> list[asyncpg.Record]:
-    return await ingredient_service.list_ingredients()
+async def list_ingredients() -> list[IngredientOut]:
+    """List all ingredients (global ones and every user's personal ones)."""
+    records = await ingredient_service.list_ingredients()
 
-async def update_ingredient(ingredient: IngredientUpdate) -> IngredientOut:
-    if ingredient is None:
-        raise HTTPException(status_code=400, detail="Ingredient is required")
+    return [IngredientOut.model_validate(dict(record) for record in records)]
 
-    return await ingredient_service.ingredient_update(ingredient)
+async def update_ingredient(ingredient: IngredientUpdate, current_user) -> IngredientOut:
+    """Update an ingredient's name.
 
-async def delete_ingredient(ingredient_id: int)-> asyncpg.Record:
-    return await ingredient_service.ingredient_delete(ingredient_id)
+    Only the user who owns the ingredient can update it.
+    Global ingredients (user_id is None) cannot be updated by anyone yet.
+    """
+
+    existing = await ingredient_service.get_ingredient_by_id(ingredient.id)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Ingredient not found")
+    if existing["user_id"] != current_user["id"]:
+        raise HTTPException(status_code=400, detail="You cannot modify this ingredient")
+
+    try:
+        record = await ingredient_service.ingredient_update(ingredient.id, ingredient.name)
+    except asyncpg.UniqueViolationError:
+        raise HTTPException(status_code=400, detail="Ingredient already exists")
+    return IngredientOut.model_validate(dict(record))
+
+
+async def delete_ingredient(ingredient_id: int, current_user)-> dict:
+    """Delete an ingredient.
+
+    Only the user who owns the ingredient can delete it.
+    """
+    existing = await ingredient_service.get_ingredient_by_id(ingredient_id)
+
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Ingredient not found")
+    if existing["user_id"] != current_user["id"]:
+        raise HTTPException(status_code=400, detail="You cannot delete this ingredient")
+
+    await ingredient_service.ingredient_delete(ingredient_id)
+    return {"details": f"{ingredient_id} has been deleted"}
