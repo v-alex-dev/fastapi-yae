@@ -25,6 +25,5 @@ async def ingredient_update(ingredient: IngredientUpdate, current_user = Depends
 
 @router.delete("/{ingredient_id}")
 async def ingredient_delete(ingredient_id: int, current_user = Depends(get_current_user)):
-    return await ingredient_controller.delete_ingredient(ingredient_id)
     """Delete an ingredient. Only the owner can delete it."""
     return await ingredient_controller.delete_ingredient(ingredient_id, current_user)
