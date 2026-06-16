@@ -20,18 +20,21 @@ async def ingredient_create(name: str, user_id: int) -> IngredientOut:
 
     return await pool.fetchrow(query, name, user_id)
 
-async def ingredient_update(ingredient: IngredientUpdate) -> IngredientOut:
-    """update ingredient """
+async def ingredient_update(ingredient_id: int, name: str) -> asyncpg.Record | None:
+    """Update the name of an existing ingredient.
+
+    Returns None if no ingredient was found with this id.
+    """
     pool = get_pool()
 
     query = """
-        UPDATE Ingredient
+        UPDATE Ingredients
         SET name = $1,
         WHERE id = $2,
-        RETURNING id, name, created_at;
+        RETURNING id, name,user_id, created_at;
     """
 
-    return await pool.fetchrow(query, ingredient.name, ingredient.id)
+    return await pool.fetchrow(query, name, ingredient_id)
 
 async def get_ingredient_by_id(ingredient_id: int) -> asyncpg.Record | None:
     pool = get_pool()
