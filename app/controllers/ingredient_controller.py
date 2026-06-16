@@ -1,7 +1,6 @@
 import asyncpg
 
 from fastapi import HTTPException
-from sqlalchemy.sql.functions import current_user
 
 from app.services import ingredient_service
 from app.schemas.ingredient_schema import IngredientUpdate, IngredientCreate, IngredientOut
@@ -26,7 +25,7 @@ async def list_ingredients(current_user) -> list[IngredientOut]:
     """List all ingredients (global ones and every user's personal ones)."""
     records = await ingredient_service.list_ingredients(current_user["id"])
 
-    return [IngredientOut.model_validate(dict(record) for record in records)]
+    return [IngredientOut.model_validate(dict(record)) for record in records]
 
 async def update_ingredient(ingredient: IngredientUpdate, current_user) -> IngredientOut:
     """Update an ingredient's name.

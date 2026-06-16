@@ -29,8 +29,8 @@ async def ingredient_update(ingredient_id: int, name: str) -> asyncpg.Record | N
 
     query = """
         UPDATE Ingredients
-        SET name = $1,
-        WHERE id = $2,
+        SET name = $1
+        WHERE id = $2
         RETURNING id, name,user_id, created_at;
     """
 
@@ -49,7 +49,7 @@ async def get_ingredient_by_id(ingredient_id: int) -> asyncpg.Record | None:
 async def list_ingredients(user_id: int) -> list[asyncpg.Record]:
     """Fetch all ingredients (global and personal), ordered by name."""
     pool = get_pool()
-    query =""""
+    query ="""
         SELECT id, name, user_id, created_at
         FROM ingredients
         WHERE user_id IS NULL OR user_id = $1
