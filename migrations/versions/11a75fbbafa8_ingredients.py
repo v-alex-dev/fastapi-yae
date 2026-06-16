@@ -24,7 +24,8 @@ def upgrade() -> None:
             CREATE TABLE ingredients (
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL UNIQUE,
-            created_at TIMESTAMP NOT NULL,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            created_at TIMESTAMP NOT NULL DEFAULT NOW()
             );
         """
     )
@@ -33,6 +34,6 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.execute(
         """
-            DROP TABLE ingredients
+            DROP TABLE ingredients;
         """
     )
