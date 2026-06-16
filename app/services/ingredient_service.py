@@ -47,10 +47,11 @@ async def get_ingredient_by_id(ingredient_id: int) -> asyncpg.Record | None:
     return await pool.fetchrow(query, ingredient_id)
 
 async def list_ingredients() -> list[asyncpg.Record]:
+    """Fetch all ingredients (global and personal), ordered by name."""
     pool = get_pool()
     query =""""
-        SELECT id, name
-        FROM Ingredient
+        SELECT id, name, user_id, created_at
+        FROM ingredients
         ORDER BY name DESC;
     """
     return await pool.fetch(query)
