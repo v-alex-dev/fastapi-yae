@@ -67,8 +67,11 @@ async def list_ingredients_by_user_id(user_id: int) -> list[asyncpg.Record]:
     return await pool.fetch(query, user_id)
 
 async def ingredient_delete(ingredient_id: int) -> asyncpg.Record | None:
+    """Delete an ingredient by id. Returns the deleted name, or None if not found."""
     pool = get_pool()
     query = """
-    DELETE FROM Ingredient WHERE id = $1 RETURNING id;
+    DELETE FROM Ingredients 
+    WHERE id = $1 
+    RETURNING name;
     """
     return await pool.fetchrow(query, ingredient_id)
