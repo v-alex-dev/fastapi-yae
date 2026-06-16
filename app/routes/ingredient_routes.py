@@ -14,9 +14,9 @@ async def ingredient_create(ingredient: IngredientCreate, current_user = Depends
     return await ingredient_controller.create_ingredient(ingredient, current_user)
 
 @router.get("/all", response_model=list[IngredientOut])
-async def ingredient_list():
+async def ingredient_list(current_user = Depends(get_current_user)):
     """List all ingredients (global and personal)."""
-    return await ingredient_controller.list_ingredients()
+    return await ingredient_controller.list_ingredients(current_user)
 
 @router.patch("/{ingredient_id}",response_model=IngredientOut)
 async def ingredient_update(ingredient: IngredientUpdate, current_user = Depends(get_current_user)) -> IngredientOut:
