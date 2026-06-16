@@ -37,9 +37,12 @@ async def ingredient_update(ingredient_id: int, name: str) -> asyncpg.Record | N
     return await pool.fetchrow(query, name, ingredient_id)
 
 async def get_ingredient_by_id(ingredient_id: int) -> asyncpg.Record | None:
+    """Fetch a single ingredient by id, or None if it does not exist."""
     pool = get_pool()
     query = """
-    SELECT id, name FROM Ingredient WHERE id = $1;
+        SELECT id, name, user_id, created_at
+        FROM ingredients 
+        WHERE id = $1;
     """
     return await pool.fetchrow(query, ingredient_id)
 
