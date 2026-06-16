@@ -19,13 +19,12 @@ async def ingredient_list():
     return await ingredient_controller.list_ingredients()
 
 @router.patch("/{ingredient_id}",response_model=IngredientOut)
-async def ingredient_update(ingredient: IngredientUpdate) -> IngredientOut:
-    return await ingredient_controller.update_ingredient(ingredient)
+async def ingredient_update(ingredient: IngredientUpdate, current_user = Depends(get_current_user)) -> IngredientOut:
+    return await ingredient_controller.update_ingredient(ingredient, current_user)
 
-@router.get("/all", response_model=list[IngredientOut])
-async def ingredient_list():
-    return await ingredient_controller.list_ingredients()
 
-@router.delete("/{ingredient_id}",response_model=IngredientOut)
+@router.delete("/{ingredient_id}")
 async def ingredient_delete(ingredient_id: int, current_user = Depends(get_current_user)):
     return await ingredient_controller.delete_ingredient(ingredient_id)
+    """Delete an ingredient. Only the owner can delete it."""
+    return await ingredient_controller.delete_ingredient(ingredient_id, current_user)
