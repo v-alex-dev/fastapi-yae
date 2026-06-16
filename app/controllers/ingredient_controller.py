@@ -22,9 +22,9 @@ async def create_ingredient(ingredient: IngredientCreate, current_user) -> Ingre
 
     return record
 
-async def list_ingredients() -> list[IngredientOut]:
+async def list_ingredients(current_user) -> list[IngredientOut]:
     """List all ingredients (global ones and every user's personal ones)."""
-    records = await ingredient_service.list_ingredients()
+    records = await ingredient_service.list_ingredients(current_user["id"])
 
     return [IngredientOut.model_validate(dict(record) for record in records)]
 
