@@ -8,9 +8,15 @@ from app.utils.dependencies import get_current_user
 router = APIRouter(prefix="/ingredients", tags=["ingredients"])
 
 
-@router.post("/new", response_model=IngredientOut)
+@router.post("/new", response_model=IngredientOut, status_code=status.HTTP_201_CREATED)
 async def ingredient_create(ingredient: IngredientCreate, current_user = Depends(get_current_user)):
-    return await ingredient_controller.create_ingredient(ingredient)
+    """Create a new personal ingredient for the current user."""
+    return await ingredient_controller.create_ingredient(ingredient, current_user)
+
+@router.get("/all", response_model=list[IngredientOut])
+async def ingredient_list():
+    """List all ingredients (global and personal)."""
+    return await ingredient_controller.list_ingredients()
 
 @router.patch("/{ingredient_id}",response_model=IngredientOut)
 async def ingredient_update(ingredient: IngredientUpdate) -> IngredientOut:
